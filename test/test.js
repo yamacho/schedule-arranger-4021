@@ -141,24 +141,20 @@ describe('/schedules/:scheduleId/users/:userId/comments', () => {
         .end((err, res) => {
           let createdSchedulePath = res.headers.location;
           let scheduleId = createdSchedulePath.split('/schedules/')[1];
-          Candidate.findOne({
-            where: { scheduleId: scheduleId }
-          }).then((candidate) => {
-            // 更新がされることをテスト
-            request(app)
-              .post(`/schedules/${scheduleId}/users/${0}/comments`)
-              .send({ comment: 'testcomment' })
-              .expect('comment:"testcomment"')
-              .end(() => {
-                Comment.findAll({
-                  where: { scheduleId: scheduleId }
-                }).then((comments) => {
-                  assert.equal(comments.length, 1);
-                  assert.equal(comments[0].comment, 'testcomment');
-                  deleteScheduleAggrigate(scheduleId, done);
-                });
+          // 更新がされることをテスト
+          request(app)
+            .post(`/schedules/${scheduleId}/users/${0}/comments`)
+            .send({ comment: 'testcomment' })
+            .expect('comment:"testcomment"')
+            .end(() => {
+              Comment.findAll({
+                where: { scheduleId: scheduleId }
+              }).then((comments) => {
+                assert.equal(comments.length, 1);
+                assert.equal(comments[0].comment, 'testcomment');
+                deleteScheduleAggrigate(scheduleId, done);
               });
-          });
+            });
         });
     });
   });
