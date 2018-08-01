@@ -24,12 +24,14 @@ router.post('/', authenticationEnsurer, (req, res, next) => {
     updatedAt: updatedAt
   }).then((schedule) => {
     const candidateNames = req.body.candidates.trim().split('\n').map((s) => s.trim());
-    const candidates = candidateNames.map((c) => { return {
-      candidateName: c,
-      scheduleId: schedule.scheduleId
-    };});
+    const candidates = candidateNames.map((c) => {
+      return {
+        candidateName: c,
+        scheduleId: schedule.scheduleId
+      };
+    });
     Candidate.bulkCreate(candidates).then(() => {
-          res.redirect('/schedules/' + schedule.scheduleId);
+      res.redirect('/schedules/' + schedule.scheduleId);
     });
   });
 });
@@ -46,13 +48,13 @@ router.get('/:scheduleId', authenticationEnsurer, (req, res, next) => {
     where: {
       scheduleId: req.params.scheduleId
     },
-    order: '"updatedAt" DESC'
+    order: [['"updatedAt"', 'DESC']]
   }).then((schedule) => {
     if (schedule) {
       storedSchedule = schedule;
       return Candidate.findAll({
         where: { scheduleId: schedule.scheduleId },
-        order: '"candidateId" ASC'
+        order: [['"candidateId"', 'ASC']]
       });
     } else {
       const err = new Error('指定された予定は見つかりません');
@@ -70,7 +72,7 @@ router.get('/:scheduleId', authenticationEnsurer, (req, res, next) => {
         }
       ],
       where: { scheduleId: storedSchedule.scheduleId },
-      order: '"user.username" ASC, "candidateId" ASC'
+      order: [[User, '"username"', 'ASC'], ['"candidateId"', 'ASC']]
     });
   }).then((availabilities) => {
     // 出欠 MapMap(キー:ユーザー ID, 値:出欠Map(キー:候補 ID, 値:出欠)) を作成する
