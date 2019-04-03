@@ -181,7 +181,8 @@ function deleteScheduleAggregate(scheduleId, done, err) {
     promises.push(promiseCommentDestroy);
     return Promise.all(promises);
   }).then(() => {
-    Schedule.findByPk(scheduleId).then((s) => { s.destroy(); });
+    return Schedule.findByPk(scheduleId).then((s) => { return s.destroy(); });
+  }).then(() => {
     if (err) return done(err);
     done();
   });
