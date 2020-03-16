@@ -2,7 +2,7 @@ extends layout
 
 block content
   h3 予定の編集
-  from(method="post", action=`/schedules/${schedule.scheduleId}?edit=1`)
+  form(method="post", action=`/schedules/${schedule.scheduleId}?edit=1`)
     div
       h5 予定名
       input(type="text" name="scheduleName" value=schedule.scheduleName)
